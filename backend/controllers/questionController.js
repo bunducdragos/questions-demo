@@ -1,4 +1,8 @@
+import prisma from "../utils/db.js"
+
 export const getAll = async (req, res) => {
+  const questions = await prisma.question.findMany({})
+  console.log(questions)
   res.status(400).json({ message: "Not Implemented" })
 }
 
