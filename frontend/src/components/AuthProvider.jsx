@@ -8,9 +8,9 @@ const AuthProvider = () => {
   useEffect(() => {
     if (location.pathname !== "/login") {
       const user = localStorage.getItem("user")
-      // if (!user) {
-      //   navigate("/login")
-      // }
+      if (!user) {
+        navigate("/login")
+      }
     }
   }, [location.pathname])
   return null

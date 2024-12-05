@@ -8,14 +8,17 @@ import "@mantine/notifications/styles.css"
 import "./index.css"
 import Router from "./Router"
 import axios from "axios"
+import { ModalsProvider } from "@mantine/modals"
 
 axios.defaults.baseURL = "http://localhost:3000"
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <MantineProvider defaultColorScheme="dark">
-      <Notifications />
-      <Router />
+      <ModalsProvider>
+        <Notifications />
+        <Router />
+      </ModalsProvider>
     </MantineProvider>
   </React.StrictMode>
 )
