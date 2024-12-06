@@ -2,7 +2,26 @@ import prisma from "../utils/db.js"
 import { to } from "../utils/helpers.js"
 
 export const getAll = async (req, res) => {
-  const [response, error] = await to(prisma.question.findMany({}))
+  const { search } = req.query
+  const tsquerySpecialChars = /[()|&:*!]/g
+  const getQueryFromSearchPhrase = (searchPhrase) => {
+    return searchPhrase.replace(tsquerySpecialChars, "").trim().split(/\s+/).join(" & ") + ":*"
+  }
+  const [response, error] = await to(
+    prisma.question.findMany({
+      where: {
+        question: {
+          search: search ? getQueryFromSearchPhrase(search) : undefined,
+        },
+        answer: {
+          search: search ? getQueryFromSearchPhrase(search) : undefined,
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+  )
   if (error) return res.status(500).json({ message: error.message })
 
   res.status(200).json(response)
@@ -17,7 +36,6 @@ export const getById = async (req, res) => {
 }
 
 export const create = async (req, res) => {
-  console.log(req.body)
   const [response, error] = await to(prisma.question.create({ data: req.body }))
   if (error) return res.status(500).json({ message: error.message })
 

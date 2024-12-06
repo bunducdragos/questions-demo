@@ -5,21 +5,24 @@ import { to } from "../util/helpers"
 import { LuTrash2, LuPenLine, LuChevronDown } from "react-icons/lu"
 import { modals } from "@mantine/modals"
 import QuestionModal from "../components/QuestionModal"
+import AssigneeModal from "../components/AssigneeModal"
 
 const Homepage = () => {
   const [loading, setLoading] = useState(true)
   const [questions, setQuestions] = useState([])
   const [selectedQuestions, setSelectedQuestions] = useState([])
+  const [search, setSearch] = useState("")
+  const [assignee, setAssignee] = useState("")
 
   useEffect(() => {
     ;(async () => {
       await fetchQuestions()
     })()
-  }, [])
+  }, [search])
 
   const fetchQuestions = async () => {
     setLoading(true)
-    const [response, error] = await to(axios.get("/api/questions"))
+    const [response, error] = await to(axios.get("/api/questions?search=" + search))
     if (error) {
       console.error(error)
       return
@@ -62,12 +65,10 @@ const Homepage = () => {
   }
 
   const handleAssigneeChange = async (id) => {
-    const [response, error] = await to(axios.put(`/api/questions/${id}`, { assignedTo: "test@gmail.com" }))
-    if (error) {
-      console.error(error)
-      return
-    }
-    await fetchQuestions()
+    modals.open({
+      title: "Assign Question",
+      children: <AssigneeModal selectedQuestions={selectedQuestions} setSelectedQuestions={setSelectedQuestions} fetchQuestions={fetchQuestions} id={id} />,
+    })
   }
 
   const handleQuestionEdit = async (question) => {
@@ -80,7 +81,7 @@ const Homepage = () => {
   return (
     <Flex gap="md" direction="column">
       <Flex justify="space-between">
-        <TextInput placeholder="Search" />
+        <TextInput placeholder="Search" value={search} onChange={(event) => setSearch(event.currentTarget.value)} />
         <Button onClick={handleAddQeustion}>Add Question</Button>
       </Flex>
       {loading ? (

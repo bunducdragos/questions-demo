@@ -5,15 +5,18 @@ import { useNavigate } from "react-router-dom"
 const Login = () => {
   const [email, setEmail] = useState("")
   const navigate = useNavigate()
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault()
     localStorage.setItem("user", email)
     navigate("/")
   }
   return (
-    <Flex style={{ height: "100vh" }} justify="center" align="center" direction="column" gap="xs">
-      <TextInput placeholder="Email" onChange={(event) => setEmail(event.currentTarget.value)} value={email} />
-      <Button onClick={handleLogin}>Login</Button>
-    </Flex>
+    <form onSubmit={handleLogin}>
+      <Flex style={{ height: "100vh" }} justify="center" align="center" direction="column" gap="xs">
+        <TextInput type="email" required placeholder="Email" onChange={(event) => setEmail(event.currentTarget.value)} value={email} />
+        <Button type="submit">Login</Button>
+      </Flex>
+    </form>
   )
 }
 

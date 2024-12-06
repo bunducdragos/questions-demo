@@ -1,5 +1,5 @@
 import { modals } from "@mantine/modals"
-import { Button, TextInput, Loader, Flex, TagsInput } from "@mantine/core"
+import { Button, TextInput, Loader, Flex, TagsInput, Textarea } from "@mantine/core"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { to } from "../util/helpers"
@@ -10,6 +10,10 @@ const QuestionModal = (props) => {
   const form = useForm({
     mode: "controlled",
     initialValues: props.question || { question: "", answer: "", properties: [], assignedTo: "" },
+    validate: {
+      question: (value) => value.length < 3 && "Question is too short",
+      assignedTo: (value) => value.length > 0 && (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
+    },
   })
 
   useEffect(() => {
@@ -37,7 +41,7 @@ const QuestionModal = (props) => {
 
   const handleCreate = async () => {
     console.log(form.values)
-    const [response, error] = await to(axios.post("/api/questions", { ...form.values, createdBy: "admin@email.com" }))
+    const [response, error] = await to(axios.post("/api/questions", { ...form.values, createdBy: localStorage.getItem("user") }))
     if (error) {
       console.error(error)
       return
@@ -48,7 +52,7 @@ const QuestionModal = (props) => {
   }
 
   const handleUpdate = async () => {
-    const [response, error] = await to(axios.put(`/api/questions/${props.question.id}`, form.values))
+    const [response, error] = await to(axios.put(`/api/questions/${props.question.id}`, { ...form.values, updatedBy: localStorage.getItem("user") }))
     if (error) {
       console.error(error)
       return
@@ -59,20 +63,22 @@ const QuestionModal = (props) => {
 
   return (
     <Flex gap="xs" direction="column">
-      <TextInput required label="Question" placeholder="Question" key={form.key("question")} {...form.getInputProps("question")} />
-      <TextInput label="Answer" placeholder="Answer" key={form.key("answer")} {...form.getInputProps("answer")} />
-      <TagsInput label="Press Enter to save a propertie" placeholder="Enter propertie" key={form.key("properties")} {...form.getInputProps("properties")} />
-      <TextInput label="Assigned To" placeholder="Assigned To" key={form.key("assignedTo")} {...form.getInputProps("assignedTo")} />
+      <form onSubmit={form.onSubmit(() => (props.quesiton ? handleUpdate() : handleCreate()))}>
+        <TextInput required label="Question" placeholder="Question" key={form.key("question")} {...form.getInputProps("question")} />
+        <Textarea label="Answer" placeholder="Answer" key={form.key("answer")} {...form.getInputProps("answer")} />
+        <TagsInput label="Press Enter to save a propertie" placeholder="Enter propertie" key={form.key("properties")} {...form.getInputProps("properties")} />
+        <TextInput label="Assigned To" placeholder="Assigned To" key={form.key("assignedTo")} {...form.getInputProps("assignedTo")} />
 
-      {props.question ? (
-        <Button fullWidth onClick={handleUpdate} mt="md">
-          Update
-        </Button>
-      ) : (
-        <Button fullWidth onClick={handleCreate} mt="md">
-          Create
-        </Button>
-      )}
+        {props.question ? (
+          <Button fullWidth type="submit" mt="md">
+            Update
+          </Button>
+        ) : (
+          <Button fullWidth type="submit" mt="md">
+            Create
+          </Button>
+        )}
+      </form>
     </Flex>
   )
 }
