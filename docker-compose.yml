@@ -2,7 +2,7 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "8080:80"
+      - "3200:80"
     environment:
       - NODE_ENV="production"
     depends_on:
@@ -13,16 +13,16 @@ services:
   backend:
     build: ./backend
     ports:
-      - "3000:3000"
+      - "3201:3000"
     environment:
-      - DATABASE_URL=postgres://postgres:password@db:5432/postgres
+      - DATABASE_URL=postgres://postgres:password@db:3202/postgres
     depends_on:
       - db
 
   db:
     image: postgres:alpine
     ports:
-      - "5432:5432"
+      - "3202:5432"
     environment:
       - POSTGRES_PASSWORD=password
     healthcheck:
