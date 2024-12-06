@@ -10,7 +10,9 @@ import Router from "./Router"
 import axios from "axios"
 import { ModalsProvider } from "@mantine/modals"
 
-axios.defaults.baseURL = "http://localhost:3000"
+if (process.env.NODE_ENV !== "production") {
+  axios.defaults.baseURL = "http://localhost:3000"
+}
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
