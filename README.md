@@ -8,12 +8,22 @@
 # Dev
 
 - clone this repo and run `cd questions-demo`
-- for backend run `cd backend && npm i && npm run start`
-- for frontend run `cd frontend && npm i && npm run dev`
+- rename .env.example into .env and add your postgresql db url
+- run the following commands in a new temrinal:
+  - `cd backend`
+  - `npm i`
+  - `npx prisma generate`
+  - `npx prisma db push`
+  - `npm run start`
+- run the following commands in another terminal
+  - `cd frontend`
+  - `npm i`
+  - `npm run dev`
 
 # Prod
 
 - clone this repo and run `cd questions-demo`
+- edit frontend/nginx.conf line 13 with the local ip of the server
 - run `docker compose up -d`
 
 # Issues

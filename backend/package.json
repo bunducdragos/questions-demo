@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon .",
-    "start": "node .",
+    "start": "prisma db push && node .",
     "postinstall": "prisma generate",
     "push": "prisma db push"
   },
